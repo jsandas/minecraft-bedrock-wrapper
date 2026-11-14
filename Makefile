@@ -14,12 +14,9 @@ test: quality test-unit
 test-unit:
 	@go test -v ./...
 
-# Run integration tests (requires docker compose)
+# Run Docker-free subprocess integration tests
 test-integration:
-	@echo "Waiting for services to be ready..."
-	@sleep 5
-	go test -v -tags integration ./integration_tests/...
-	@$(MAKE) docker-down
+	go test -v -count=1 -tags integration ./integration/...
 
 # Start docker services
 docker-up:
@@ -79,13 +76,9 @@ example: build
 help:
 	@echo "Available targets:"
 	@echo "  build               - Build the Minecraft Bedrock wrapper"
-	@echo "  test                - Run all tests (quality checks + integration tests)"
+	@echo "  test                - Run quality checks and unit tests"
 	@echo "  test-unit           - Run unit tests"
-	@echo "  test-integration    - Run all integration tests (requires docker)"
-	@echo "  test-nginx-1-30-0   - Run Nginx 1.30.0 integration tests"
-	@echo "  test-nginx-1-2-9    - Run Nginx 1.2.9 integration tests"
-	@echo "  test-postfix        - Run Postfix STARTTLS integration tests"
-	@echo "  test-mariadb        - Run MariaDB TLS integration tests"
+	@echo "  test-integration    - Run Docker-free subprocess integration tests"
 	@echo "  docker-up           - Start integration docker containers"
 	@echo "  docker-down         - Stop integration docker containers"
 	@echo "  clean               - Clean build artifacts"
