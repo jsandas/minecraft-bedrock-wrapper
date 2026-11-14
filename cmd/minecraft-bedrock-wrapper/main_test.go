@@ -11,7 +11,7 @@ func TestRun_HelpReturnsZero(t *testing.T) {
 }
 
 func TestLoadFlagsFromEnvUsesMinecraftVersionEnv(t *testing.T) {
-	t.Setenv("MINECRAFT_VER", "1.2.3.4")
+	t.Setenv("MINECRAFT_VERSION", "1.2.3.4")
 
 	listenAddress := ""
 	appDir := ""
@@ -21,7 +21,7 @@ func TestLoadFlagsFromEnvUsesMinecraftVersionEnv(t *testing.T) {
 
 	loadFlagsFromEnv(&listenAddress, &appDir, &mcVersion, &authKey, &port)
 	if mcVersion != "1.2.3.4" {
-		t.Fatalf("expected MINECRAFT_VER to be loaded, got %q", mcVersion)
+		t.Fatalf("expected MINECRAFT_VERSION to be loaded, got %q", mcVersion)
 	}
 }
 
