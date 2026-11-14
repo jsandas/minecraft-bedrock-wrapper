@@ -13,17 +13,11 @@ import (
 	"github.com/jsandas/bedrock-server/internal/server"
 )
 
-var version string
-var commit string
-var buildDate string
-
 func main() {
 	os.Exit(run(os.Args[1:]))
 }
 
 func run(args []string) int {
-	fmt.Printf("Version: %s, Commit: %s, Build Date: %s\n", version, commit, buildDate)
-
 	logger := slog.New(slog.DiscardHandler)
 	flags, err := parseFlags(args)
 	if err != nil {
