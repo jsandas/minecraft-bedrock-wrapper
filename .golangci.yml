@@ -6,7 +6,7 @@ formatters:
   settings:
     goimports:
       local-prefixes:
-        - github.com/jsandas/minecraft-bedrock-broadcast-relay
+        - github.com/jsandas/minecraft-bedrock-wrapper
 
 linters:
   enable:
