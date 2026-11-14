@@ -1,4 +1,4 @@
-package server_test
+package server
 
 import (
 	"io"
@@ -10,14 +10,12 @@ import (
 	"github.com/gorilla/websocket"
 
 	"github.com/jsandas/bedrock-server/internal/runner"
-
-	"github.com/jsandas/bedrock-server/internal/server"
 )
 
 func TestHandleLiveness(t *testing.T) {
 	// Create a server with a real runner instance
 	r := runner.New("echo", "test")
-	srv := &server.Server{
+	srv := &Server{
 		runner:      r,
 		connections: make(map[*websocket.Conn]bool),
 		authKey:     "test-key",
@@ -25,7 +23,7 @@ func TestHandleLiveness(t *testing.T) {
 	}
 
 	// Create a test request
-	req, err := http.NewRequest("GET", "/health/live", nil)
+	req, err := http.NewRequest(http.MethodGet, "/health/live", nil)
 	if err != nil {
 		t.Fatalf("Failed to create request: %v", err)
 	}
@@ -60,7 +58,7 @@ func TestHandleReadinessReady(t *testing.T) {
 	// Simulate server being ready
 	r.SetReady(true)
 
-	srv := &server.Server{
+	srv := &Server{
 		runner:      r,
 		connections: make(map[*websocket.Conn]bool),
 		authKey:     "test-key",
@@ -68,7 +66,7 @@ func TestHandleReadinessReady(t *testing.T) {
 	}
 
 	// Create a test request
-	req, err := http.NewRequest("GET", "/health/ready", nil)
+	req, err := http.NewRequest(http.MethodGet, "/health/ready", nil)
 	if err != nil {
 		t.Fatalf("Failed to create request: %v", err)
 	}
@@ -96,7 +94,7 @@ func TestHandleReadinessNotReady(t *testing.T) {
 	// Create a server with a not-ready runner
 	r := runner.New("echo", "test")
 
-	srv := &server.Server{
+	srv := &Server{
 		runner:      r,
 		connections: make(map[*websocket.Conn]bool),
 		authKey:     "test-key",
@@ -104,7 +102,7 @@ func TestHandleReadinessNotReady(t *testing.T) {
 	}
 
 	// Create a test request
-	req, err := http.NewRequest("GET", "/health/ready", nil)
+	req, err := http.NewRequest(http.MethodGet, "/health/ready", nil)
 	if err != nil {
 		t.Fatalf("Failed to create request: %v", err)
 	}
