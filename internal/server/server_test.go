@@ -1,4 +1,4 @@
-package server
+package server_test
 
 import (
 	"io"
@@ -10,16 +10,18 @@ import (
 	"github.com/gorilla/websocket"
 
 	"github.com/jsandas/bedrock-server/internal/runner"
+
+	"github.com/jsandas/bedrock-server/internal/server"
 )
 
 func TestHandleLiveness(t *testing.T) {
 	// Create a server with a real runner instance
 	r := runner.New("echo", "test")
-	srv := &Server{
-		runner:       r,
-		connections:  make(map[*websocket.Conn]bool),
-		authKey:      "test-key",
-		logger:       slog.New(slog.DiscardHandler),
+	srv := &server.Server{
+		runner:      r,
+		connections: make(map[*websocket.Conn]bool),
+		authKey:     "test-key",
+		logger:      slog.New(slog.DiscardHandler),
 	}
 
 	// Create a test request
@@ -57,12 +59,12 @@ func TestHandleReadinessReady(t *testing.T) {
 	r := runner.New("echo", "test")
 	// Simulate server being ready
 	r.SetReady(true)
-	
-	srv := &Server{
-		runner:       r,
-		connections:  make(map[*websocket.Conn]bool),
-		authKey:      "test-key",
-		logger:       slog.New(slog.DiscardHandler),
+
+	srv := &server.Server{
+		runner:      r,
+		connections: make(map[*websocket.Conn]bool),
+		authKey:     "test-key",
+		logger:      slog.New(slog.DiscardHandler),
 	}
 
 	// Create a test request
@@ -93,12 +95,12 @@ func TestHandleReadinessReady(t *testing.T) {
 func TestHandleReadinessNotReady(t *testing.T) {
 	// Create a server with a not-ready runner
 	r := runner.New("echo", "test")
-	
-	srv := &Server{
-		runner:       r,
-		connections:  make(map[*websocket.Conn]bool),
-		authKey:      "test-key",
-		logger:       slog.New(slog.DiscardHandler),
+
+	srv := &server.Server{
+		runner:      r,
+		connections: make(map[*websocket.Conn]bool),
+		authKey:     "test-key",
+		logger:      slog.New(slog.DiscardHandler),
 	}
 
 	// Create a test request
