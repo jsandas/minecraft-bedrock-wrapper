@@ -9,7 +9,6 @@ formatters:
         - github.com/jsandas/minecraft-bedrock-broadcast-relay
 
 linters:
-  disable-all: true
   enable:
     - errcheck      # Check for unchecked errors
     - govet         # Examine Go source code
