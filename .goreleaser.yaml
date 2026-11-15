@@ -15,6 +15,12 @@ before:
     # you may remove this if you don't need go generate
     - go generate ./...
 
+archives:
+  - id: minecraft-bedrock-wrapper
+    builds:
+      - minecraft-bedrock-wrapper
+    format: tar.gz
+
 builds:
   - id: minecraft-bedrock-wrapper
     binary: minecraft-bedrock-wrapper
@@ -39,12 +45,7 @@ nfpms:
       - systemd
       - adduser
     package_name: minecraft-bedrock-wrapper
-    # meta: true
     contents:
-      # - src: ./dist/minecraft-bedrock-wrapper_{{ .Os }}_{{ .Arch }}
-      #   dst: /usr/bin/minecraft-bedrock-wrapper
-      #   file_info:
-      #     mode: 0755
       - src: build/contrib/minecraft-bedrock-wrapper.service
         dst: /etc/systemd/system/minecraft-bedrock-wrapper.service
         type: "config"
