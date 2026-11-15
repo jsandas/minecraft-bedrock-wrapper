@@ -5,6 +5,10 @@ all: build
 
 # Build the Minecraft Bedrock wrapper
 build:
+	go build -o minecraft-bedrock-wrapper ./cmd/minecraft-bedrock-wrapper
+
+# Build the artifacts
+artifacts:
 	goreleaser release --clean --snapshot
 
 # Run all tests and quality checks
