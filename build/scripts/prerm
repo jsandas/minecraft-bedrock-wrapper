@@ -1,0 +1,5 @@
+systemctl stop minecraft-bedrock-wrapper
+systemctl disable minecraft-bedrock-wrapper
+rm /etc/systemd/system/minecraft-bedrock-wrapper.service
+systemctl daemon-reload
+systemctl reset-failed

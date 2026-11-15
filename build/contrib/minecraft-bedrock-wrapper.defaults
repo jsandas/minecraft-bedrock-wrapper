@@ -1,0 +1,7 @@
+# this is minecraft-bedrock-wrapper configuration
+# MINECRAFT_VERSION=<minecraft_version>
+APP_DIR=/opt/minecraft
+AUTH_KEY=supersecret
+EULA_ACCEPT=false
+LISTEN_ADDRESS=
+PORT=
