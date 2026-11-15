@@ -1,0 +1,22 @@
+cat <<EOF
+minecraft-bedrock-wrapper has been installed as a systemd service.
+
+To start/stop minecraft-bedrock-wrapper:
+
+sudo systemctl start minecraft-bedrock-wrapper
+sudo systemctl stop minecraft-bedrock-wrapper
+
+To enable/disable minecraft-bedrock-wrapper starting automatically on boot:
+
+sudo systemctl enable minecraft-bedrock-wrapper
+sudo systemctl disable minecraft-bedrock-wrapper
+
+To reload minecraft-bedrock-wrapper:
+
+sudo systemctl restart minecraft-bedrock-wrapper
+
+To view minecraft-bedrock-wrapper logs:
+
+journalctl -f -u minecraft-bedrock-wrapper
+
+EOF

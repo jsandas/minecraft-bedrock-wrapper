@@ -7,6 +7,10 @@ all: build
 build:
 	go build -o minecraft-bedrock-wrapper ./cmd/minecraft-bedrock-wrapper
 
+# Build the artifacts
+artifacts:
+	goreleaser release --clean --snapshot
+
 # Run all tests and quality checks
 test: quality test-unit
 

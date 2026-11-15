@@ -1,0 +1,14 @@
+[Unit]
+Description=minecraft-bedrock-wrapper
+After=network.target
+
+[Service]
+User=minecraft
+ExecStart=/usr/bin/minecraft-bedrock-wrapper
+StandardOutput=inherit
+StandardError=inherit
+Restart=always
+EnvironmentFile=/etc/defaults/minecraft-bedrock-wrapper
+
+[Install]
+WantedBy=multi-user.target
