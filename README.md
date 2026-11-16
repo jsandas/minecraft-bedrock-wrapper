@@ -135,12 +135,12 @@ sudo rpm -ivh minecraft-bedrock-wrapper_<version>_linux_amd64.rpm
 Package installations automatically configure:
 - Dedicated system user and group: `minecraft:minecraft`
 - Binary installed to: `/usr/bin/minecraft-bedrock-wrapper`
-- Service configuration file: `/etc/defaults/minecraft-bedrock-wrapper`
+- Service configuration file: `/etc/default/minecraft-bedrock-wrapper`
 - Systemd service unit: `/etc/systemd/system/minecraft-bedrock-wrapper.service`
 
 **Steps after installing package:**
 
-1. Edit `/etc/defaults/minecraft-bedrock-wrapper`:
+1. Edit `/etc/default/minecraft-bedrock-wrapper`:
    ```bash
    # Set EULA acceptance and secure auth key
    EULA_ACCEPT=true
