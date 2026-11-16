@@ -37,12 +37,14 @@ Set the environment variable `EULA_ACCEPT=true`.
 
 ### 2. Run Directly
 
+You must provide `MINECRAFT_VERSION` (or `--mc-version`), as there is **no default version specified** in the application or default configuration. The wrapper uses this to download and extract the Bedrock server binary if it is not already present:
+
 ```bash
 # Accept EULA and set your authentication key
 export EULA_ACCEPT=true
 export AUTH_KEY="your-secure-token"
 
-# (Optional) Download a specific Bedrock version if not already present
+# Specify the Minecraft Bedrock version to download (required)
 export MINECRAFT_VERSION="1.21.0.03"
 
 # Run the wrapper
@@ -63,9 +65,9 @@ Configuration can be specified through command-line flags or environment variabl
 
 | Flag | Environment Variable | Default | Description |
 | --- | --- | --- | --- |
+| `--mc-version` | `MINECRAFT_VERSION` | *(Required)* | Bedrock Dedicated Server version to download and extract (e.g. `1.21.0.03`). There is **no default version** specified in the application or default config; this must be provided for the wrapper to fetch the server. |
 | `--auth-key` | `AUTH_KEY` | *(Required)* | Pre-shared key for authenticating Web UI and WebSocket console connections. |
 | `--app-dir` | `APP_DIR` | Current directory | Working directory containing or targeting the Bedrock server files and `server.properties`. |
-| `--mc-version` | `MINECRAFT_VERSION` | `""` | Bedrock Dedicated Server version to automatically download and extract if not present (e.g. `1.21.0.03`). |
 | `--listen` | `LISTEN_ADDRESS` | `:8080` | Host and TCP port for the HTTP/WebSocket server. |
 | `--port` | `PORT` | `19132` | Minecraft server network port. Sets `server-port` and `server-udp-ports` in `server.properties`. |
 | `--command` | — | `./bedrock_server` | Binary or executable to run (primarily used for debugging or custom server binaries). |
@@ -140,13 +142,17 @@ Package installations automatically configure:
 
 **Steps after installing package:**
 
-1. Edit `/etc/defaults/minecraft-bedrock-wrapper`:
+1. Edit `/etc/defaults/minecraft-bedrock-wrapper` to configure the required parameters (especially `MINECRAFT_VERSION`, which has no default and must be set for the service to start):
    ```bash
-   # Set EULA acceptance and secure auth key
+   # Required: accept EULA, set authentication key, and define version
    EULA_ACCEPT=true
    AUTH_KEY=your-secure-password
    MINECRAFT_VERSION=1.21.0.03
+
+   # Optional customizations
    APP_DIR=/opt/minecraft
+   PORT=19132
+   LISTEN_ADDRESS=:8080
    ```
 
 2. Start and enable the service:
