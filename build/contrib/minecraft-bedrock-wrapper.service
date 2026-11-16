@@ -8,7 +8,7 @@ ExecStart=/usr/bin/minecraft-bedrock-wrapper
 StandardOutput=inherit
 StandardError=inherit
 Restart=always
-EnvironmentFile=/etc/defaults/minecraft-bedrock-wrapper
+EnvironmentFile=/etc/default/minecraft-bedrock-wrapper
 
 [Install]
 WantedBy=multi-user.target
