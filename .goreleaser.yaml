@@ -49,13 +49,19 @@ nfpms:
       - src: build/contrib/minecraft-bedrock-wrapper.service
         dst: /etc/systemd/system/minecraft-bedrock-wrapper.service
         type: "config"
-      - src: build/contrib/minecraft-bedrock-wrapper.defaults
-        dst: /etc/defaults/minecraft-bedrock-wrapper
-        type: "config"
+      - src: build/contrib/minecraft-bedrock-wrapper.default
+        dst: /etc/default/minecraft-bedrock-wrapper
+        type: "config|noreplace"
         file_info:
           mode: 0640
           owner: minecraft
           group: minecraft
+      - dst: /opt/minecraft
+        type: dir
+        file_info:
+          mode: 0755
+        owner: minecraft
+        group: minecraft
     scripts:
       preinstall: build/scripts/preinst
       postinstall: build/scripts/postinst
