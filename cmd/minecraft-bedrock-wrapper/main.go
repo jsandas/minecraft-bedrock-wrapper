@@ -14,11 +14,14 @@ import (
 	"github.com/jsandas/bedrock-server/internal/server"
 )
 
-func main() {
-	var version = "dev"
-	var commit = "none"
-	var date = "unknown"
+var (
+	version = "dev"
+	commit  = "none"
+	date    = "unknown"
+	builtBy = "unknown"
+)
 
+func main() {
 	if info, ok := debug.ReadBuildInfo(); ok {
 		if version == "dev" && info.Main.Version != "" && info.Main.Version != "(devel)" {
 			version = info.Main.Version
