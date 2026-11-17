@@ -134,7 +134,7 @@ func handleFlagError(err error) int {
 
 func validateRuntimeConfig(mcVersion, authKey, port *string) error {
 	isValidMinecraftVersion := func(version string) bool {
-		// Simple regex to match Minecraft version format X.Y.Z
+		// Simple regex to match Minecraft version format X.Y.Z.W (e.g. 1.21.0.03)
 		re := regexp.MustCompile(`^\d+\.\d+\.\d+\.\d+$`)
 		return re.MatchString(version)
 	}
