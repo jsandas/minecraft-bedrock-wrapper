@@ -24,6 +24,12 @@ archives:
 builds:
   - id: minecraft-bedrock-wrapper
     binary: minecraft-bedrock-wrapper
+    ldflags:
+      - -s -w
+      - -X main.version={{.Version}}
+      - -X main.commit={{.Commit}}
+      - -X main.date={{.Date}}
+      - -X main.builtBy=goreleaser
     env:
       - CGO_ENABLED=0
     goarch:
