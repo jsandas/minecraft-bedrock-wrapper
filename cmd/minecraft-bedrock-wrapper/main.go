@@ -21,27 +21,50 @@ var (
 )
 
 func main() {
-	if info, ok := debug.ReadBuildInfo(); ok {
-		if version == "dev" && info.Main.Version != "" && info.Main.Version != "(devel)" {
-			version = info.Main.Version
-		}
-		for _, setting := range info.Settings {
-			switch setting.Key {
-			case "vcs.revision":
-				if commit == "none" {
-					commit = setting.Value
-				}
-			case "vcs.time":
-				if date == "unknown" {
-					date = setting.Value
-				}
-			}
-		}
+	info, ok := debug.ReadBuildInfo()
+	if !ok {
+		info = nil
 	}
+	metadata := resolveBuildMetadata(info, buildMetadata{
+		version: version,
+		commit:  commit,
+		date:    date,
+	})
+	version, commit, date = metadata.version, metadata.commit, metadata.date
 
 	fmt.Fprintf(os.Stdout, "Version: %s Commit: %s BuildDate: %s\n", version, commit, date)
 
 	os.Exit(run(os.Args[1:]))
+}
+
+type buildMetadata struct {
+	version string
+	commit  string
+	date    string
+}
+
+func resolveBuildMetadata(info *debug.BuildInfo, metadata buildMetadata) buildMetadata {
+	if info == nil {
+		return metadata
+	}
+
+	if metadata.version == "dev" && info.Main.Version != "" && info.Main.Version != "(devel)" {
+		metadata.version = info.Main.Version
+	}
+	for _, setting := range info.Settings {
+		switch setting.Key {
+		case "vcs.revision":
+			if metadata.commit == "none" {
+				metadata.commit = setting.Value
+			}
+		case "vcs.time":
+			if metadata.date == "unknown" {
+				metadata.date = setting.Value
+			}
+		}
+	}
+
+	return metadata
 }
 
 func run(args []string) int {
