@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log/slog"
 	"os"
+	"runtime/debug"
 
 	"github.com/jsandas/bedrock-server/internal/config"
 	"github.com/jsandas/bedrock-server/internal/downloader"
@@ -14,6 +15,30 @@ import (
 )
 
 func main() {
+	var version = "dev"
+	var commit = "none"
+	var date = "unknown"
+
+	if info, ok := debug.ReadBuildInfo(); ok {
+		if version == "dev" && info.Main.Version != "" && info.Main.Version != "(devel)" {
+			version = info.Main.Version
+		}
+		for _, setting := range info.Settings {
+			switch setting.Key {
+			case "vcs.revision":
+				if commit == "none" {
+					commit = setting.Value
+				}
+			case "vcs.time":
+				if date == "unknown" {
+					date = setting.Value
+				}
+			}
+		}
+	}
+
+	fmt.Fprintf(os.Stdout, "Version: %s Commit: %s BuildDate: %s\n", version, commit, date)
+
 	os.Exit(run(os.Args[1:]))
 }
 
