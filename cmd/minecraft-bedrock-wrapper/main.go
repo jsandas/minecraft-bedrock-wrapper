@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log/slog"
 	"os"
+	"regexp"
 	"runtime/debug"
 
 	"github.com/jsandas/bedrock-server/internal/config"
@@ -74,7 +75,7 @@ func run(args []string) int {
 		return handleFlagError(err)
 	}
 
-	if err = validateRuntimeConfig(flags.authKey, flags.port); err != nil {
+	if err = validateRuntimeConfig(flags.mcVersion, flags.authKey, flags.port); err != nil {
 		fmt.Fprintln(os.Stderr, err.Error())
 		return 1
 	}
@@ -131,7 +132,25 @@ func handleFlagError(err error) int {
 	return 1
 }
 
-func validateRuntimeConfig(authKey, port *string) error {
+func validateRuntimeConfig(mcVersion, authKey, port *string) error {
+	isValidMinecraftVersion := func(version string) bool {
+		// Simple regex to match Minecraft version format X.Y.Z
+		re := regexp.MustCompile(`^\d+\.\d+\.\d+\.\d+$`)
+		return re.MatchString(version)
+	}
+	// Validating the minecraft version is specified
+	if *mcVersion == "" {
+		return fmt.Errorf(
+			"error: Minecraft version is required. Set it using the MINECRAFT_VERSION environment variable or --mc-version flag",
+		)
+	}
+	//Validation that minecraft version matches expected format
+	if !isValidMinecraftVersion(*mcVersion) {
+		return fmt.Errorf(
+			"error: invalid Minecraft version format. Expected format: X.Y.Z",
+		)
+	}
+
 	if *authKey == "" {
 		return fmt.Errorf(
 			"error: authentication key is required. Set it using the AUTH_KEY environment variable or --auth-key flag",

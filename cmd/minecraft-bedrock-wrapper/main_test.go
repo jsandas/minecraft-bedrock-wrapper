@@ -1,7 +1,9 @@
 package main
 
 import (
+	"os"
 	"runtime/debug"
+	"strings"
 	"testing"
 )
 
@@ -40,6 +42,94 @@ func TestLoadFlagsFromEnvUsesPortEnv(t *testing.T) {
 	loadFlagsFromEnv(&listenAddress, &appDir, &mcVersion, &authKey, &port)
 	if port != "19140" {
 		t.Fatalf("expected PORT to be loaded, got %q", port)
+	}
+}
+
+func TestValidateRuntimeConfigRejectsInvalidConfiguration(t *testing.T) {
+	tests := []struct {
+		name      string
+		mcVersion string
+		authKey   string
+		eula      string
+		wantErr   string
+	}{
+		{
+			name:    "missing Minecraft version",
+			authKey: "secret",
+			eula:    "true",
+			wantErr: "Minecraft version is required",
+		},
+		{
+			name:      "invalid Minecraft version",
+			mcVersion: "1.2.3",
+			authKey:   "secret",
+			eula:      "true",
+			wantErr:   "invalid Minecraft version format",
+		},
+		{
+			name:      "missing authentication key",
+			mcVersion: "1.2.3.4",
+			eula:      "true",
+			wantErr:   "authentication key is required",
+		},
+		{
+			name:      "EULA not accepted",
+			mcVersion: "1.2.3.4",
+			authKey:   "secret",
+			eula:      "false",
+			wantErr:   "you must accept the EULA",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Setenv("EULA_ACCEPT", tt.eula)
+
+			mcVersion := tt.mcVersion
+			authKey := tt.authKey
+			port := ""
+			err := validateRuntimeConfig(&mcVersion, &authKey, &port)
+			if err == nil {
+				t.Fatal("validateRuntimeConfig() error = nil; want an error")
+			}
+			if !strings.Contains(err.Error(), tt.wantErr) {
+				t.Fatalf("validateRuntimeConfig() error = %q; want it to contain %q", err, tt.wantErr)
+			}
+		})
+	}
+}
+
+func TestValidateRuntimeConfigSetsRuntimeEnvironment(t *testing.T) {
+	t.Setenv("EULA_ACCEPT", "true")
+	t.Setenv("PORT", "19132")
+	t.Setenv("LD_LIBRARY_PATH", "previous")
+
+	mcVersion := "1.2.3.4"
+	authKey := "secret"
+	port := "19140"
+	if err := validateRuntimeConfig(&mcVersion, &authKey, &port); err != nil {
+		t.Fatalf("validateRuntimeConfig() error = %v; want nil", err)
+	}
+	if got := os.Getenv("PORT"); got != "19140" {
+		t.Fatalf("PORT = %q; want %q", got, "19140")
+	}
+	if got := os.Getenv("LD_LIBRARY_PATH"); got != "." {
+		t.Fatalf("LD_LIBRARY_PATH = %q; want %q", got, ".")
+	}
+}
+
+func TestValidateRuntimeConfigPreservesPortWhenUnset(t *testing.T) {
+	t.Setenv("EULA_ACCEPT", "true")
+	t.Setenv("PORT", "19132")
+
+	mcVersion := "1.2.3.4"
+	authKey := "secret"
+	port := ""
+	if err := validateRuntimeConfig(&mcVersion, &authKey, &port); err != nil {
+		t.Fatalf("validateRuntimeConfig() error = %v; want nil", err)
+	}
+	if got := os.Getenv("PORT"); got != "19132" {
+		t.Fatalf("PORT = %q; want %q", got, "19132")
 	}
 }
 
