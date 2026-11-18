@@ -173,7 +173,7 @@ func validateRuntimeConfig(mcVersion, authKey, port *string) error {
 }
 
 func prepareRuntime(flags cliFlags, workDir string, logger *slog.Logger) error {
-	if *flags.mcVersion != "" {
+	if *flags.mcVersion != "" && *flags.command == "./bedrock_server" {
 		logger.Info("Downloading Minecraft server version", "version", *flags.mcVersion)
 		if downloadErr := downloader.DownloadMinecraftServer(*flags.mcVersion, workDir, ""); downloadErr != nil {
 			return fmt.Errorf("error downloading server: %w", downloadErr)

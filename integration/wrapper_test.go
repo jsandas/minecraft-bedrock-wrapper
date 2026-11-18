@@ -21,6 +21,7 @@ import (
 
 const (
 	key              = "integration-secret"
+	minecraftVersion = "1.21.0.03"
 	operationTimeout = 10 * time.Second
 )
 
@@ -219,7 +220,12 @@ func TestWrapperSubprocess(t *testing.T) {
 	t.Run("health websocket configuration and clean exit", func(t *testing.T) {
 		dir := propertiesDir(t)
 		addr := freeAddress(t)
-		p := start(t, wrapper, t.TempDir(), []string{"EULA_ACCEPT=true", "CFG_SERVER_NAME=integration", "PORT=19145"},
+		p := start(t, wrapper, t.TempDir(), []string{
+			"EULA_ACCEPT=true",
+			"MINECRAFT_VERSION=" + minecraftVersion,
+			"CFG_SERVER_NAME=integration",
+			"PORT=19145",
+		},
 			[]string{"--command", fake, "--listen", addr, "--app-dir", dir, "--auth-key", key})
 		waitHealth(t, p, addr, "/health/live", http.StatusOK, `{"status":"alive"}`)
 		waitHealth(t, p, addr, "/health/ready", http.StatusServiceUnavailable, `{"status":"not_ready"}`)
@@ -249,7 +255,7 @@ func TestWrapperSubprocess(t *testing.T) {
 	t.Run("child failure propagates", func(t *testing.T) {
 		dir := propertiesDir(t)
 		addr := freeAddress(t)
-		p := start(t, wrapper, dir, []string{"EULA_ACCEPT=true"},
+		p := start(t, wrapper, dir, []string{"EULA_ACCEPT=true", "MINECRAFT_VERSION=" + minecraftVersion},
 			[]string{"--command", fake, "--listen", addr, "--auth-key", key})
 		waitHealth(t, p, addr, "/health/live", http.StatusOK, `{"status":"alive"}`)
 		conn := connect(t, addr, key, http.StatusSwitchingProtocols)
@@ -267,7 +273,7 @@ func TestWrapperSubprocess(t *testing.T) {
 		}{
 			{"missing auth", "authentication key is required", []string{"EULA_ACCEPT=true"}, nil, true},
 			{"missing EULA", "you must accept the EULA", nil, []string{"--auth-key", key}, true},
-			{"missing properties", "error updating server properties", []string{"EULA_ACCEPT=true"}, []string{"--auth-key", key}, false},
+			{"missing properties", "error updating server properties", []string{"EULA_ACCEPT=true"}, []string{"--auth-key", key, "--command", fake}, false},
 			{"missing executable", "Error starting command", []string{"EULA_ACCEPT=true"}, []string{"--auth-key", key, "--command", filepath.Join(binDir, "missing")}, true},
 		}
 		for _, tc := range cases {
@@ -276,7 +282,8 @@ func TestWrapperSubprocess(t *testing.T) {
 				if tc.properties {
 					dir = propertiesDir(t)
 				}
-				p := start(t, wrapper, dir, tc.env, tc.args)
+				env := append([]string{"MINECRAFT_VERSION=" + minecraftVersion}, tc.env...)
+				p := start(t, wrapper, dir, env, tc.args)
 				if err := p.wait(t); err == nil || !strings.Contains(p.output(), tc.want) {
 					t.Fatalf("startup failure: err=%v output=%s; want %q", err, p.output(), tc.want)
 				}
